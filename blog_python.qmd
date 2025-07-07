@@ -279,7 +279,7 @@ In our evaluation, however, this did not prove to be an issue. o4-mini used the 
 ## Key insights
 
 * **Most of the current frontier models perform similarly on the Pandas problems from DS-1000.** 
-* **OpenAI's o4-mini and o3-mini perform just as well as the more expensive o3 and o1 models.**
+* **OpenAI's o4-mini and o3-mini perform similarly to the more expensive models (Gemini 2.5 Pro, o1, and o3).**
 * **Claude Sonnet 4 performed similarly regardless of whether thinking was enabled.** This is similar to what we found for [R code generation](https://posit.co/blog/r-llm-evaluation/). 
 
 ### Limitations
@@ -292,7 +292,7 @@ We [previously evaluated](https://posit.co/blog/r-llm-evaluation/) a similar set
 
 ## Pricing
 
-LLM pricing is typically provided per million tokens. Note that in our analysis, o1, o3, o3-mini, and o4-mini performed similarly for Python code generation, but o1 and o3 are much more expensive. OpenAI uses the "mini" suffix for models that are smaller, faster, and cheaper than the other models. 
+LLM pricing is typically provided per million tokens. Note that in our analysis, Gemini 2.5 Pro, o1, o3, o3-mini, and o4-mini performed similarly for Python code generation, but Gemini 2.5 Pro, o1, and o3 are much more expensive. 
 
 ```{r}
 model_prices |> 
@@ -313,7 +313,7 @@ In future work, we plan to evaluate model performance on other common Python dat
 
 * We used [Inspect](https://inspect.aisi.org.uk/) to create connections to evaluate model performance on Pandas code generation tasks.
 * We tested each model on a shared benchmark: the [DS-1000 dataset](https://ukgovernmentbeis.github.io/inspect_evals/evals/coding/ds1000/). DS-1000 contains a collection of Python data science problems that involve various libraries, including Pandas, TensorFlow, and Matplotlib. To constrain our evaluation, we only included the 291 Pandas problems present in the data.   
-* Using Inspect, we had each model solve each Pandas problem. Then, we scored their solutions using a scoring model (Claude Sonnet 4). Each solution received either an Incorrect, Partially Correct, or Correct score. 
+* Using Inspect, we had each model solve each Pandas problem. Then, we scored their solutions using a scoring model (Claude Sonnet 4). Each solution received a score of Incorrect, Partially Correct, or Correct. 
 
 You can see all the code used to evaluate the models [here](https://github.com/skaltman/model-eval/eval.py). If you'd like to learn more about LLM evaluation for code generation, see Simon Couch's series of [blog posts](https://www.simonpcouch.com/blog/) and the [Inspect website](https://inspect.aisi.org.uk/). 
 
