@@ -49,7 +49,7 @@ get_scores <- function(file) {
     id = map_int(samples, "id"),
     model = map_chr(samples, \(x) x$output$model),
     score = map_chr(samples, \(x) x$scores$model_graded_qa$value),
-    reasoning = reasoning_tokens > 0,
+    reasoning = reasoning_tokens,
     input = total_input_tokens,
     output = total_output_tokens
   ) 
@@ -84,7 +84,7 @@ df <-
       fct_rev(),
     model = 
       case_when(
-        model == "Claude Sonnet 4" & reasoning ~ "Claude Sonnet 4\n(Thinking)",
+        model == "Claude Sonnet 4" & reasoning > 0 ~ "Claude Sonnet 4\n(Thinking)",
         model == "Claude Sonnet 4" ~ "Claude Sonnet 4\n(No Thinking)",
         .default = model
       ) |> 
@@ -109,7 +109,7 @@ model_prices <-
     "o1", 15.00, 60.00,
     "o3-mini", 1.10, 4.40,
     "Gemini 2.5 Flash", 0.30, 2.50,
-    "Gemini 2.5 Pro", 2.50, 15.00
+    "Gemini 2.5 Pro", 1.25, 15.00
   ) |>
     arrange(desc(match(Name, model_order))) 
 
@@ -123,11 +123,13 @@ eval_costs_tokens <-
     )
   ) |> 
   left_join(model_prices, join_by(model_join == Name)) |> 
-  mutate(actual_cost = input * Input / 1e6 + output * Output / 1e6) |> 
+  mutate(
+    actual_cost = input * Input / 1e6 + output * Output / 1e6 + reasoning * Output / 1e6
+  ) |> 
   group_by(model) |> 
   slice(1) |> 
   ungroup() |> 
-  select(-score, -reasoning, -model_join) |> 
+  select(-score, -model_join) |> 
   rename(
     input_cost = Input,
     output_cost = Output
@@ -151,7 +153,7 @@ eval_tokens_summary <-
 
 We looked at a handful of models and evaluated how well they each generate Python code. To do so, we used [Inspect](https://inspect.aisi.org.uk/), a Python framework for LLM evaluation, and the [DS-1000 dataset](https://ukgovernmentbeis.github.io/inspect_evals/evals/coding/ds1000/), a code generation benchmark for Python data science libraries. For this evaluation, we limited DS-1000 to only the 291 coding problems that involved Pandas. 
 
-## Current recommendation for Pandas: OpenAI o4-mini, OpenAI o3-mini, or Claude Sonnet 4
+## Current recommendation for Pandas: OpenAI o3-mini, o4-mini, or Claude Sonnet 4 
 
 ```{r}
 df |> 
@@ -172,7 +174,7 @@ df |>
     title = "Model performance on Pandas code generation",
     fill = "Score",
     subtitle = 
-      "Performance is broadly similar across models, with Gemini 2.5 Pro and newer OpenAI models slightly ahead."
+      "Performance is broadly similar across models, with Gemini 2.5 Pro and newer\nOpenAI models slightly ahead."
   ) +
   theme_light() +
   theme(
@@ -182,7 +184,7 @@ df |>
   ) 
 ```
 
-**For Pandas coding tasks, we recommend using OpenAI's o4-mini or o3-mini or Anthropic's Claude Sonnet 4.** The top models all performed very similarly, but their prices vary substantially. o4-mini, o3-mini, and Claude Sonnet 4 are substantially less expensive than o1 and o3 (see Pricing Table below). For Pandas code generation, we expect that the additional cost will not translate to proportionally better results. 
+**For Pandas coding tasks, we recommend using OpenAI's o4-mini or o3-mini or Anthropic's Claude Sonnet 4.** The top models all performed very similarly, but their prices vary substantially. **o4-mini, o3-mini, and Claude Sonnet 4 are substantially less expensive than Gemini 2.5 Pro, o1, and o3** (see Pricing Table below). For Pandas code generation, we expect that the additional cost will not translate to proportionally better results. 
 
 ::: {.callout-note}
 ## Reasoning vs. non-reasoning models
@@ -212,21 +214,21 @@ eval_summary |>
   annotate(
     "text", 
     x = 1, 
-    y = 1, 
+    y = 1.03, 
     label = "High performing,\ninexpensive",
     hjust = 0,
     color = "#666666",
-    size = 3.5
+    size = 4
   ) +
   annotate(
     "text", 
-    x = 25, 
-    y = 0.3, 
+    x = 45, 
+    y = 0.45, 
     label = "Lower performing,\nexpensive",
     hjust = 1,
     vjust = 0,
     color = "#666666",
-    size = 3.5
+    size = 4
   ) +
   geom_hline(
     yintercept = mean_correct, 
@@ -248,7 +250,7 @@ eval_summary |>
     color = "#333333",
     fill = "#f5f5f5"
   ) +
-  coord_cartesian(ylim = c(0.3, 1.05)) +
+  coord_cartesian(ylim = c(0.45, 1.05)) +
   scale_x_continuous(labels = scales::label_dollar()) +
   scale_y_continuous(
     labels = scales::label_percent(), 
@@ -259,7 +261,7 @@ eval_summary |>
     y = "Percent correct",
     title = "Model performance on Pandas code generation vs. cost",
     subtitle = 
-      "Cost is based on the total tokens used across the 291 Pandas problems in the evaluation."
+      "Cost is based on the total tokens used across the 291 Pandas problems\nin the evaluation."
   ) +
   theme_light() + 
   theme(
@@ -299,7 +301,7 @@ model_prices |>
   tab_header(title = "Price per 1 million tokens")
 ```
 
-In our evaluation process, each model used between `r format(eval_tokens_summary$min_input, big.mark = ",")` and `r format(eval_tokens_summary$max_input, big.mark = ",")` input tokens and between `r format(eval_tokens_summary$min_output, big.mark = ",")` and `r format(eval_tokens_summary$max_output, big.mark = ",")` output tokens. The entire analysis cost around $`r round(eval_tokens_summary$total_cost)`.
+In our evaluation process, each model used between `r format(eval_tokens_summary$min_input, big.mark = ",")` and `r format(eval_tokens_summary$max_input, big.mark = ",")` input tokens and between `r format(eval_tokens_summary$min_output, big.mark = ",")` and `r format(eval_tokens_summary$max_output, big.mark = ",")` output tokens (including reasoning tokens). 
 
 ## What about other packages?
 
