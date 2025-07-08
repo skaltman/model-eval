@@ -184,7 +184,7 @@ df |>
   ) 
 ```
 
-**For Pandas coding tasks, we recommend using OpenAI's o4-mini or o3-mini or Anthropic's Claude Sonnet 4.** The top models all performed very similarly, but their prices vary substantially. **o4-mini, o3-mini, and Claude Sonnet 4 are substantially less expensive than Gemini 2.5 Pro, o1, and o3** (see Pricing Table below). For Pandas code generation, we expect that the additional cost will not translate to proportionally better results. 
+**For Pandas coding tasks, we recommend using OpenAI's o4-mini or o3-mini or Anthropic's Claude Sonnet 4.** The top models all performed very similarly, but their prices vary substantially. **o4-mini, o3-mini, and Claude Sonnet 4 are substantially less expensive than Gemini 2.5 Pro, o1, and o3** (see plot below). For Pandas code generation, we expect that the additional cost will not translate to proportionally better results. 
 
 ::: {.callout-note}
 ## Reasoning vs. non-reasoning models
@@ -269,11 +269,19 @@ eval_summary |>
   )  
 ```
 
+```{r}
+gemini_total_tokens <-
+  eval_costs_tokens |> 
+  filter(model == "Gemini 2.5 Pro") |> 
+  mutate(total_tokens = reasoning + input + output) |> 
+  pull(total_tokens)
+```
+
 ::: {.callout-caution}
 ## Take token usage into account
 A **token** is the fundamental unit of data that an LLM can process (for text processing, a token is approximately a word). Reasoning models, like o3-mini and o4-mini, often generate significantly more output tokens than non-reasoning models. So while some models are inexpensive per token, their actual cost can be higher than expected.  
 
-In our evaluation, however, this did not prove to be an issue. o4-mini used the most output tokens of any model, but was still one of the least expensive options. 
+For example, Gemini 2.5 Pro, which performed best in the evaluation, was the second most expensive model. Its per-token cost is only moderately high, but it used substantially more reasoning tokens than other models, bringing its token total usage to `r format(gemini_total_tokens, big.mark = ",")`.
 :::
 
 ## Key insights
@@ -292,7 +300,7 @@ We [previously evaluated](https://posit.co/blog/r-llm-evaluation/) a similar set
 
 ## Pricing
 
-LLM pricing is typically provided per million tokens. Note that in our analysis, Gemini 2.5 Pro, o1, o3, o3-mini, and o4-mini performed similarly for Python code generation, but Gemini 2.5 Pro, o1, and o3 are much more expensive. 
+LLM pricing is typically provided per million tokens. Note that in our analysis, Gemini 2.5 Pro, o1, o3, o3-mini, and o4-mini performed similarly for Python code generation, but Gemini 2.5 Pro, o1, and o3 are more expensive. 
 
 ```{r}
 model_prices |> 
@@ -300,8 +308,6 @@ model_prices |>
   fmt_currency(columns = c(Input, Output), currency = "USD") |> 
   tab_header(title = "Price per 1 million tokens")
 ```
-
-In our evaluation process, each model used between `r format(eval_tokens_summary$min_input, big.mark = ",")` and `r format(eval_tokens_summary$max_input, big.mark = ",")` input tokens and between `r format(eval_tokens_summary$min_output, big.mark = ",")` and `r format(eval_tokens_summary$max_output, big.mark = ",")` output tokens (including reasoning tokens). 
 
 ## What about other packages?
 
