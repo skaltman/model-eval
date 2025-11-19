@@ -1,3 +1,7 @@
+.posit/
+__pycache__/
+archive/
+
 # History files
 .Rhistory
 .Rapp.history
