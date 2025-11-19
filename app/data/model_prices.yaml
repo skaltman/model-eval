@@ -1,0 +1,80 @@
+models:
+  - name: "Claude Sonnet 4 (No Thinking)"
+    model_id: "sonnet_4"
+    input_price: 3.00
+    output_price: 15.00
+
+  - name: "Claude Sonnet 4"
+    model_id: "sonnet_4_thinking"
+    input_price: 3.00
+    output_price: 15.00
+
+  - name: "Claude Sonnet 4.5"
+    model_id: "sonnet_4_5_thinking"
+    input_price: 3.00
+    output_price: 15.00
+
+  - name: "Claude Opus 4.1"
+    model_id: "opus_4_1_thinking"
+    input_price: 15.00
+    output_price: 75.00
+
+  - name: "Claude Haiku 4.5"
+    model_id: "haiku_4_5_thinking"
+    input_price: 1.00
+    output_price: 5.00
+
+  - name: "o3"
+    model_id: "gpt_o3"
+    input_price: 10.00
+    output_price: 40.00
+
+  - name: "o4-mini"
+    model_id: "gpt_o4_mini"
+    input_price: 1.10
+    output_price: 4.40
+
+  - name: "GPT-4.1"
+    model_id: "gpt_4_1"
+    input_price: 2.00
+    output_price: 8.00
+
+  - name: "o1"
+    model_id: "gpt_o1"
+    input_price: 15.00
+    output_price: 60.00
+
+  - name: "o3-mini"
+    model_id: "gpt_o3_mini"
+    input_price: 1.10
+    output_price: 4.40
+
+  - name: "GPT-5"
+    model_id: "gpt_5"
+    input_price: 1.25
+    output_price: 10.00
+
+  - name: "GPT-5 mini"
+    model_id: "gpt_5_mini"
+    input_price: 0.25
+    output_price: 2.00
+
+  - name: "GPT-5 nano"
+    model_id: "gpt_5_nano"
+    input_price: 0.05
+    output_price: 0.40
+
+  - name: "gpt-oss-20b"
+    model_id: "gpt_oss_20b"
+    input_price: 0.00
+    output_price: 0.00
+
+  - name: "gpt-oss-120b"
+    model_id: "gpt_oss_120b"
+    input_price: 0.00
+    output_price: 0.00
+
+  - name: "Gemini 3"
+    model_id: "gemini_3"
+    input_price: 1.25
+    output_price: 5.00
