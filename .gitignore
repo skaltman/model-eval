@@ -1,6 +1,7 @@
 .posit/
 __pycache__/
 archive/
+Claude.md
 
 # History files
 .Rhistory
