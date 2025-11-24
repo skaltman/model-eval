@@ -32,77 +32,173 @@ available_models <- get_available_models(are_eval_full)
 # UI
 # ============================================================================
 
-ui <- page_sidebar(
-  title = "LLM Evaluation Results Explorer",
+ui <- page_navbar(
+  title = "R Code Generation: LLM Evaluation Results",
   theme = bs_theme(version = 5, bootswatch = "flatly"),
+  id = "main_nav",
 
-  sidebar = sidebar(
-    title = "Model Selection",
-    width = 300,
+  nav_panel(
+    "Results",
+    page_sidebar(
+      sidebar = sidebar(
+        title = "Model Selection",
+        width = 300,
 
-    checkboxGroupInput(
-      "selected_models",
-      "Select models to compare:",
-      choices = setNames(
-        available_models$model_join,
-        available_models$model_display
+        checkboxGroupInput(
+          "selected_models",
+          "Select models to compare:",
+          choices = setNames(
+            available_models$model_join,
+            available_models$model_display
+          ),
+          selected = available_models$model_join[1:5]
+        ),
+
+        hr(),
+
+        actionButton(
+          "select_all",
+          "Select All",
+          class = "btn-sm btn-outline-primary",
+          width = "48%"
+        ),
+        actionButton(
+          "clear_all",
+          "Clear All",
+          class = "btn-sm btn-outline-secondary",
+          width = "48%"
+        ),
+
+        hr(),
+
+        p(
+          class = "text-muted small",
+          "This app displays evaluation results from the vitals package, ",
+          "comparing LLM performance on R code generation tasks."
+        )
       ),
-      selected = available_models$model_join[1:5]
-    ),
 
-    hr(),
+      navset_card_tab(
+        nav_panel(
+          "Performance",
+          card(
+            card_header("Model Performance on R Code Generation"),
+            card_body(
+              plotOutput("performance_plot", height = "600px")
+            )
+          )
+        ),
 
-    actionButton(
-      "select_all",
-      "Select All",
-      class = "btn-sm btn-outline-primary",
-      width = "48%"
-    ),
-    actionButton(
-      "clear_all",
-      "Clear All",
-      class = "btn-sm btn-outline-secondary",
-      width = "48%"
-    ),
+        nav_panel(
+          "Cost vs Performance",
+          card(
+            card_header("Model Performance vs. Cost"),
+            card_body(
+              plotOutput("cost_plot", height = "600px")
+            )
+          )
+        ),
 
-    hr(),
-
-    p(
-      class = "text-muted small",
-      "This app displays evaluation results from the vitals package, ",
-      "comparing LLM performance on R code generation tasks."
+        nav_panel(
+          "Pricing Details",
+          card(
+            card_header("Model Pricing and Token Usage"),
+            card_body(
+              class = "p-0",
+              gt_output("pricing_table")
+            )
+          )
+        )
+      )
     )
   ),
 
-  navset_card_tab(
-    nav_panel(
-      "Performance",
-      card(
-        card_header("Model Performance on R Code Generation"),
-        card_body(
-          plotOutput("performance_plot", height = "600px")
-        )
-      )
-    ),
+  nav_panel(
+    "About",
+    layout_columns(
+      col_widths = c(2, 8, 2),
+      NULL,
+      div(
+        style = "padding-top: 20px;",
+        h2("About This Evaluation"),
 
-    nav_panel(
-      "Cost vs Performance",
-      card(
-        card_header("Cost vs Performance Analysis"),
-        card_body(
-          plotOutput("cost_plot", height = "600px")
-        )
-      )
-    ),
+        h4("Overview"),
+        p(
+          "This app displays evaluation results comparing how well various Large Language Models (LLMs) ",
+          "generate R code. With many AI coding assistants available, this evaluation helps you choose ",
+          "the best model for R programming tasks."
+        ),
 
-    nav_panel(
-      "Pricing Details",
-      card(
-        card_header("Model Pricing and Token Usage"),
-        card_body(
-          gt_output("pricing_table")
+        h4("Methodology"),
+        tags$ul(
+          tags$li(
+            strong("Framework: "),
+            "We used the ",
+            tags$a(href = "https://ellmer.tidyverse.org/", "ellmer package", target = "_blank"),
+            " to create connections to various models and the ",
+            tags$a(href = "https://vitals.tidyverse.org/", "vitals package", target = "_blank"),
+            " to evaluate model performance."
+          ),
+          tags$li(
+            strong("Dataset: "),
+            "Models were tested on the ", code("are"), " dataset (", strong("A"), "n ",
+            strong("R"), " ", strong("E"), "val), which contains challenging R coding problems ",
+            "and their solutions."
+          ),
+          tags$li(
+            strong("Scoring: "),
+            "Each model's solution was scored by Claude 3.7 Sonnet as either Incorrect, ",
+            "Partially Correct, or Correct."
+          ),
+          tags$li(
+            strong("Evaluation runs: "),
+            "Each model completed 3 runs (epochs) on the dataset to account for variability."
+          )
+        ),
+
+        h4("How to Use This App"),
+        tags$ul(
+          tags$li("Use the sidebar to select which models you want to compare"),
+          tags$li(strong("Performance tab: "), "View the distribution of correct, partially correct, and incorrect solutions"),
+          tags$li(strong("Cost vs Performance tab: "), "Compare model accuracy against the actual cost incurred during evaluation"),
+          tags$li(strong("Pricing Details tab: "), "Explore detailed pricing and token usage with sortable, searchable table")
+        ),
+
+        h4("Resources"),
+        tags$ul(
+          tags$li(
+            tags$a(
+              href = "https://posit.co/blog/r-llm-evaluation/",
+              "Read the full blog post about R code generation",
+              target = "_blank"
+            )
+          ),
+          tags$li(
+            tags$a(
+              href = "https://posit.co/blog/python-llm-evaluation/",
+              "Read about Python (Pandas) code generation evaluation",
+              target = "_blank"
+            )
+          ),
+          tags$li(
+            tags$a(
+              href = "https://github.com/skaltman/model-eval-r",
+              "View the evaluation code on GitHub",
+              target = "_blank"
+            )
+          )
+        ),
+
+        hr(),
+
+        p(
+          class = "text-muted small",
+          "Note: Pricing reflects per-million-token costs and actual charges incurred during the evaluation. ",
+          "Token usage can vary significantly between models, especially for reasoning models which typically ",
+          "generate more output tokens."
         )
-      )
+      ),
+      NULL
     )
   )
 )
@@ -112,6 +208,7 @@ ui <- page_sidebar(
 # ============================================================================
 
 server <- function(input, output, session) {
+
   # Reactive: Filtered evaluation data
   filtered_eval <- reactive({
     req(input$selected_models)
@@ -172,13 +269,15 @@ server <- function(input, output, session) {
 
     eval_summary() |>
       left_join(model_prices, by = "model_join") |>
+      arrange(desc(percent_correct)) |>
       select(
         Model = model_display,
         `Input (per 1M tokens)` = Input,
         `Output (per 1M tokens)` = Output,
         `Input Tokens Used` = input,
         `Output Tokens Used` = output,
-        `Total Cost` = price
+        `Total Cost` = price,
+        `% Correct` = percent_correct
       ) |>
       gt() |>
       fmt_currency(
@@ -192,11 +291,39 @@ server <- function(input, output, session) {
       ) |>
       fmt_number(
         columns = c(`Input Tokens Used`, `Output Tokens Used`),
-        decimals = 0
+        decimals = 0,
+        use_seps = TRUE
+      ) |>
+      fmt_percent(
+        columns = `% Correct`,
+        decimals = 1
+      ) |>
+      cols_align(
+        align = "left",
+        columns = everything()
       ) |>
       tab_header(
-        title = "Model Pricing Details",
-        subtitle = "Pricing per 1 million tokens and actual usage in evaluation"
+        title = "Model Pricing and Performance Details",
+        subtitle = "Sorted by percent correct (descending)"
+      ) |>
+      data_color(
+        columns = `% Correct`,
+        palette = c("#ef8a62", "#f6e8c3", "#6caea7"),
+        domain = NULL
+      ) |>
+      data_color(
+        columns = `Total Cost`,
+        palette = c("#e8f4f8", "#a8d5e2", "#6baed6", "#3182bd", "#08519c"),
+        domain = NULL
+      ) |>
+      tab_options(
+        table.font.size = px(14),
+        heading.title.font.size = px(18),
+        heading.subtitle.font.size = px(14),
+        column_labels.font.weight = "bold",
+        ihtml.use_pagination = FALSE,
+        ihtml.use_page_size_select = FALSE,
+        table.width = pct(100)
       )
   })
 }

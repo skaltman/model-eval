@@ -39,6 +39,11 @@ models:
     input_price: 2.00
     output_price: 8.00
 
+  - name: "GPT-5.1"
+    model_id: "gpt_5_1"
+    input_price: 2.50
+    output_price: 10.00
+
   - name: "o1"
     model_id: "gpt_o1"
     input_price: 15.00
@@ -76,5 +81,5 @@ models:
 
   - name: "Gemini 3"
     model_id: "gemini_3"
-    input_price: 1.25
-    output_price: 5.00
+    input_price: 2.00
+    output_price: 12.00

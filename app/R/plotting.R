@@ -35,7 +35,6 @@ plot_performance <- function(eval_data) {
     labs(
       x = "Percent",
       y = NULL,
-      title = "Model Performance on R Code Generation",
       fill = "Score"
     ) +
     theme_light() +
@@ -63,26 +62,12 @@ plot_cost_vs_performance <- function(summary_data) {
   mean_price <- mean(plot_data$price, na.rm = TRUE)
 
   ggplot(plot_data, aes(price, percent_correct)) +
-    geom_point(size = 3, color = "#2c3e50") +
-    geom_hline(
-      yintercept = mean_correct,
-      color = "#666666",
-      linewidth = 0.8,
-      alpha = 0.4,
-      linetype = "dashed"
-    ) +
-    geom_vline(
-      xintercept = mean_price,
-      color = "#666666",
-      linewidth = 0.8,
-      alpha = 0.4,
-      linetype = "dashed"
-    ) +
+    geom_point(size = 5, color = "#2c3e50") +
     geom_label_repel(
       aes(label = model_display),
-      force = 1,
+      force = 3,
       max.overlaps = 20,
-      size = 3.5,
+      size = 7,
       fill = "#f5f5f5",
       color = "#333333"
     ) +
@@ -93,13 +78,12 @@ plot_cost_vs_performance <- function(summary_data) {
     ) +
     labs(
       x = "Total Cost (USD)",
-      y = "Percent Correct",
-      title = "Model Performance vs. Cost",
-      subtitle = "Dashed lines show mean values across selected models"
+      y = "Percent Correct"
     ) +
     theme_light() +
     theme(
-      plot.subtitle = element_text(face = "italic", size = 11),
+      plot.subtitle = element_text(face = "italic", size = 12),
+      plot.margin = margin(10, 10, 20, 10),
       axis.title = element_text(size = 14),
       title = element_text(size = 16),
       axis.text = element_text(size = 12)

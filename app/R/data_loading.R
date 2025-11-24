@@ -57,6 +57,7 @@ process_eval_data <- function(tasks) {
         `Claude Opus 4.1` = "opus_4_1_thinking",
         `Claude Haiku 4.5` = "haiku_4_5_thinking",
         `GPT-4.1` = "gpt_4_1",
+        `GPT-5.1` = "gpt_5_1",
         `o1` = "gpt_o1",
         `o3-mini` = "gpt_o3_mini",
         `o3` = "gpt_o3",
