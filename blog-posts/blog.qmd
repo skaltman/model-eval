@@ -21,8 +21,8 @@ library(fs)
 ```{r setup}
 # Assumes more output than input
 # Based on ratios from eval
-COST_BLEND_INPUT_MULTIPLIER <- 1/3
-EXCLUDED_MODELS <- 
+COST_BLEND_INPUT_MULTIPLIER <- 1 / 3
+EXCLUDED_MODELS <-
   c(
     "gpt_oss_120b",
     "gpt_oss_20b",
@@ -32,23 +32,24 @@ EXCLUDED_MODELS <-
     "gpt_o1"
   )
 
-tasks <- 
-  dir_ls("results_rds", glob = "*.rds") |>
+tasks <-
+  dir_ls(here::here("results_rds"), glob = "*.rds") |>
   set_names(\(x) path_ext_remove(basename(x))) |>
-  map(read_rds) 
+  map(read_rds)
 
-are_eval <- 
-  tasks |> 
+are_eval <-
+  tasks |>
   imap(
-    \(x, idx)
-    vitals_bind(x) |> 
-    mutate(model = idx)
-  ) |> 
-  list_rbind() |> 
+    \(x, idx) {
+      vitals_bind(x) |>
+        mutate(model = idx)
+    }
+  ) |>
+  list_rbind() |>
   mutate(
     model_join = model,
     model = fct_recode(
-      model, 
+      model,
       `Claude Sonnet 4\n(No Thinking)` = "sonnet_4",
       `Claude Sonnet 4` = "sonnet_4_thinking",
       `Claude Sonnet 4.5` = "sonnet_4_5_thinking",
@@ -67,60 +68,61 @@ are_eval <-
     ),
     model = fct_reorder(model, score, .fun = \(x) sum(x == "C", na.rm = TRUE)),
     score = fct_recode(
-      score, 
-      "Correct" = "C", "Partially Correct" = "P", "Incorrect" = "I"
-      )
-    ) |> 
-  filter(!model_join %in% EXCLUDED_MODELS) 
+      score,
+      "Correct" = "C",
+      "Partially Correct" = "P",
+      "Incorrect" = "I"
+    )
+  ) |>
+  filter(!model_join %in% EXCLUDED_MODELS)
 
 model_order <-
-  are_eval$model  |> 
+  are_eval$model |>
   # fct_collapse(
-  #   "Claude Sonnet 4" = 
+  #   "Claude Sonnet 4" =
   #     c("Claude Sonnet 4\n(No Thinking)", "Claude Sonnet 4\n(Thinking)")
-  # ) |> 
+  # ) |>
   levels()
 
 model_prices <-
   tribble(
-    ~Name,                  ~Input, ~Output, ~model_join,
-    "Claude Sonnet 4",        3.00,   15.00,  "sonnet_4",
-    "Claude Sonnet 4",        3.00,   15.00,  "sonnet_4_thinking",
-    "Claude Sonnet 4.5",      3.00,   15.00,  "sonnet_4_5_thinking",
-    "Claude Opus 4.1",        15.00,  75.00,  "opus_4_1",
-    "Claude Haiku 4.5",       1.00,   5.00,   "haiku_4_5_thinking",
-    "o3",                    10.00,   40.00,  "gpt_o3",
-    "o4-mini",                1.10,    4.40,  "gpt_o4_mini",
-    "GPT-4.1",                2.00,    8.00,  "gpt_4_1",
-    "o1",                    15.00,   60.00,  "gpt_o1",
-    "o3-mini",                1.10,    4.40,  "gpt_o3_mini",
-    "GPT-5",                  1.25,   10.00,  "gpt_5",
-    "GPT-5 mini",             0.25,    2.00,  "gpt_5_mini",
-    "GPT-5 nano",             0.05,    0.40,  "gpt_5_nano",
-    "gpt-oss-20b",            0.00,    0.00,  "gpt_oss_20b",
-    "gpt-oss-120b",           0.00,    0.00,  "gpt_oss_120b"
+    ~Name               , ~Input , ~Output , ~model_join           ,
+    "Claude Sonnet 4"   ,  3.00  , 15.00   , "sonnet_4"            ,
+    "Claude Sonnet 4"   ,  3.00  , 15.00   , "sonnet_4_thinking"   ,
+    "Claude Sonnet 4.5" ,  3.00  , 15.00   , "sonnet_4_5_thinking" ,
+    "Claude Opus 4.1"   , 15.00  , 75.00   , "opus_4_1"            ,
+    "Claude Haiku 4.5"  ,  1.00  ,  5.00   , "haiku_4_5_thinking"  ,
+    "o3"                , 10.00  , 40.00   , "gpt_o3"              ,
+    "o4-mini"           ,  1.10  ,  4.40   , "gpt_o4_mini"         ,
+    "GPT-4.1"           ,  2.00  ,  8.00   , "gpt_4_1"             ,
+    "o1"                , 15.00  , 60.00   , "gpt_o1"              ,
+    "o3-mini"           ,  1.10  ,  4.40   , "gpt_o3_mini"         ,
+    "GPT-5"             ,  1.25  , 10.00   , "gpt_5"               ,
+    "GPT-5 mini"        ,  0.25  ,  2.00   , "gpt_5_mini"          ,
+    "GPT-5 nano"        ,  0.05  ,  0.40   , "gpt_5_nano"          ,
+    "gpt-oss-20b"       ,  0.00  ,  0.00   , "gpt_oss_20b"         ,
+    "gpt-oss-120b"      ,  0.00  ,  0.00   , "gpt_oss_120b"
   ) |>
-    arrange(desc(match(Name, model_order))) 
+  arrange(desc(match(Name, model_order)))
 
 are_costs <-
-  tasks |> 
-  imap(\(x, idx) x$get_cost() |> mutate(model_join = idx)) |> 
-  list_rbind() |> 
-  filter(source != "scorer") |> 
-  mutate(price = str_extract(price, "\\d+\\.\\d+") |> as.double()) |> 
-  left_join(model_prices, by = "model_join") |> 
+  tasks |>
+  imap(\(x, idx) x$get_cost() |> mutate(model_join = idx)) |>
+  list_rbind() |>
+  filter(source != "scorer") |>
+  mutate(price = str_extract(price, "\\d+\\.\\d+") |> as.double()) |>
+  left_join(model_prices, by = "model_join") |>
   mutate(
-    price = 
-      if_else(
-        is.na(price), 
-        input * Input / 1e6 + output * Output / 1e6,
-        price
-      )
-  ) |> 
+    price = if_else(
+      is.na(price),
+      input * Input / 1e6 + output * Output / 1e6,
+      price
+    )
+  ) |>
   select(model = Name, model_id = model, model_join, input, output, price)
-  
+
 are_cost_summary <-
-  are_costs |> 
+  are_costs |>
   summarize(
     min_input = min(input),
     max_input = max(input),
@@ -128,7 +130,7 @@ are_cost_summary <-
     max_output = max(output),
     avg_io_ratio = median(input / output),
     total_cost = sum(price)
-  ) |> 
+  ) |>
   mutate(
     across(min_input:max_output, \(x) signif(x, 4) |> format(big.mark = ","))
   )
@@ -144,26 +146,23 @@ In June, we ran an earlier version of this evaluation with the models available 
 ## Current recommendation: OpenAI GPT-5, OpenAI o4-mini, or Claude Sonnet 4
 
 ```{r main-plot, dpi=300}
-are_eval |> 
+are_eval |>
   ggplot(aes(y = model, fill = score)) +
   geom_bar(position = "fill") +
   scale_fill_manual(
     breaks = rev,
-    values = 
-      c(
-        "Correct" = "#6caea7",
-        "Partially Correct" = "#f6e8c3", 
-        "Incorrect" = "#ef8a62"
-      )
+    values = c(
+      "Correct" = "#6caea7",
+      "Partially Correct" = "#f6e8c3",
+      "Incorrect" = "#ef8a62"
+    )
   ) +
   scale_x_continuous(labels = scales::percent, expand = c(5e-3, 5e-3)) +
   labs(
-    x = "Percent", 
+    x = "Percent",
     y = NULL,
     title = "Model performance on R code generation",
-    fill = "Score",
-    subtitle = 
-      "Claude Sonnet 4.5 and GPT-5, two of the newest\nmodels, performed the best."
+    fill = "Score"
   ) +
   theme_light() +
   theme(
@@ -174,7 +173,7 @@ are_eval |>
     title = element_text(size = 15),
     axis.text = element_text(size = 11.5),
     legend.text = element_text(size = 12)
-  ) 
+  )
 ```
 
 **For R coding tasks, we recommend using OpenAI's GPT-5 or o4-mini or Claude Sonnet 4.** OpenAI’s o3 also scored well, but its cost was roughly ten times higher than o4-mini and about four times higher than GPT-5. Claude Sonnet 4 remains a competitive option for R code generation. Anecdotally, many R programmers seem to prefer Claude Sonnet to OpenAI's models.
@@ -188,24 +187,24 @@ Most of the models we looked at here are reasoning models, or are capable of rea
 
 ```{r price-plot, dpi=300}
 are_eval_summary <-
-  are_eval |> 
-  group_by(model, model_join) |> 
-  summarize(percent_correct = sum(score == "Correct") / n()) |> 
-  ungroup() |> 
+  are_eval |>
+  group_by(model, model_join) |>
+  summarize(percent_correct = sum(score == "Correct") / n()) |>
+  ungroup() |>
   left_join(are_costs |> select(model_join, price), by = "model_join")
 
 mean_correct <- mean(are_eval_summary$percent_correct)
 mean_price <- mean(are_eval_summary$price)
-  
-are_eval_summary |> 
-  mutate(model = str_replace(model, "\n", " ")) |> 
-  # filter(!model %in% c("gpt-oss-120b", "gpt-oss-20b")) |> 
+
+are_eval_summary |>
+  mutate(model = str_replace(model, "\n", " ")) |>
+  # filter(!model %in% c("gpt-oss-120b", "gpt-oss-20b")) |>
   ggplot(aes(price, percent_correct)) +
   geom_point() +
   annotate(
-    "text", 
-    x = -0.15, 
-    y = 0.675, 
+    "text",
+    x = -0.15,
+    y = 0.675,
     label = "High performing,\ninexpensive",
     hjust = 0,
     vjust = 0,
@@ -213,9 +212,9 @@ are_eval_summary |>
     size = 4
   ) +
   annotate(
-    "text", 
-    x = 6.5, 
-    y = 0.4, 
+    "text",
+    x = 6.5,
+    y = 0.4,
     label = "Lower performing,\nexpensive",
     hjust = 1,
     vjust = 0,
@@ -223,20 +222,20 @@ are_eval_summary |>
     size = 4
   ) +
   geom_hline(
-    yintercept = mean_correct, 
-    color = "#666666", 
+    yintercept = mean_correct,
+    color = "#666666",
     linewidth = 1,
     alpha = 0.4
   ) +
   geom_vline(
-    xintercept = mean_price, 
-    color = "#666666", 
+    xintercept = mean_price,
+    color = "#666666",
     linewidth = 1,
     alpha = 0.4
   ) +
   geom_label_repel(
-    aes(label = model, fill = (model == "Claude Sonnet 4.5")), 
-    force = 0.4, 
+    aes(label = model, fill = (model == "Claude Sonnet 4.5")),
+    force = 0.4,
     seed = 5,
     nudge_x = 0.2,
     color = "#333333",
@@ -254,17 +253,16 @@ are_eval_summary |>
     x = "Total cost",
     y = "Percent correct",
     title = "Model performance on R code generation vs. cost",
-    subtitle = 
-      "Cost reflects the actual total charges incurred."
+    subtitle = "Cost reflects the actual total charges incurred."
   ) +
-  theme_light() + 
+  theme_light() +
   theme(
     plot.subtitle = element_text(face = "italic"),
     legend.position = "none",
     axis.title = element_text(size = 14),
     title = element_text(size = 15),
     axis.text = element_text(size = 12)
-  )  
+  )
 ```
 
 ::: {.callout-caution}
@@ -299,17 +297,16 @@ LLM pricing is typically provided per million tokens. In our evaluation process,
 As noted above, although the gpt-oss models are free to use, you may need to pay to host them if you are unable to run them locally. 
 
 ```{r pricing-table}
-model_prices |> 
-  left_join(are_costs, by = "model_join") |> 
+model_prices |>
+  left_join(are_costs, by = "model_join") |>
   mutate(
-    Name = 
-      case_when(
-        model_join == "sonnet_4_thinking" ~ "Claude Sonnet 4 (Thinking)",
-        model_join == "sonnet_4" ~ "Claude Sonnet 4 (No Thinking)",
-        .default = Name
-      ),
+    Name = case_when(
+      model_join == "sonnet_4_thinking" ~ "Claude Sonnet 4 (Thinking)",
+      model_join == "sonnet_4" ~ "Claude Sonnet 4 (No Thinking)",
+      .default = Name
+    ),
     price = round(price, 2)
-  ) |> 
+  ) |>
   select(
     Name,
     Input,
@@ -317,14 +314,17 @@ model_prices |>
     `Actual cost` = price,
     `Input tokens used` = input,
     `Output tokens used` = output
-  ) |> 
+  ) |>
   gt() |>
-  fmt_currency(columns = c(Input, Output, `Actual cost`), currency = "USD") |> 
-  fmt_number(columns = c(`Input tokens used`, `Output tokens used`), decimals = 0) |> 
+  fmt_currency(columns = c(Input, Output, `Actual cost`), currency = "USD") |>
+  fmt_number(
+    columns = c(`Input tokens used`, `Output tokens used`),
+    decimals = 0
+  ) |>
   tab_header(
     title = "Model costs, in order of eval performance",
     subtitle = "Input and Output costs are per 1 million tokens. 'Actual cost' reflects total charges for running the evaluation."
-  ) 
+  )
 ```
 
 
