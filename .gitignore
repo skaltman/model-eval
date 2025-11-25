@@ -60,7 +60,12 @@ rsconnect/
 logs/
 
 
-# RDS and RDA files 
+# RDS and RDA files
 *.rds
 *.rda
+
+# renv
+renv/library/
+renv/staging/
+renv/local/
 
