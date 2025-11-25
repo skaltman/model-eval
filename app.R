@@ -1,23 +1,20 @@
-# LLM Evaluation Results Shiny App
-# ============================================================================
+# `are` eval results Shiny app
 
 library(shiny)
 library(bslib)
 library(gt)
 
 # Source helper functions
-source(here::here("app/R/data_loading.R"))
-source(here::here("app/R/plotting.R"))
+source("R/data_loading.R")
+source("R/plotting.R")
 
-# ============================================================================
-# Load Data
-# ============================================================================
+# Load Data ------------------------------------------------------------------
 
 # Load model prices
-model_prices <- load_model_prices(here::here("app/data/model_prices.yaml"))
+model_prices <- load_model_prices("data/model_prices.yaml")
 
 # Load evaluation results
-tasks <- load_eval_results(here::here("results_rds"))
+tasks <- load_eval_results("results_rds")
 
 # Process evaluation data
 are_eval_full <- process_eval_data(tasks)
@@ -28,12 +25,10 @@ are_costs <- compute_cost_data(tasks, model_prices)
 # Get available models
 available_models <- get_available_models(are_eval_full)
 
-# ============================================================================
-# UI
-# ============================================================================
+# UI -------------------------------------------------------------------------
 
 ui <- page_navbar(
-  title = "R Code Generation: LLM Evaluation Results",
+  title = "How well do LLMs generate R code?",
   theme = bs_theme(version = 5, bootswatch = "flatly"),
   id = "main_nav",
 
@@ -121,94 +116,16 @@ ui <- page_navbar(
       div(
         style = "padding-top: 20px;",
         h2("About This Evaluation"),
-
-        h4("Overview"),
-        p(
-          "This app displays evaluation results comparing how well various Large Language Models (LLMs) ",
-          "generate R code. With many AI coding assistants available, this evaluation helps you choose ",
-          "the best model for R programming tasks."
-        ),
-
-        h4("Methodology"),
-        tags$ul(
-          tags$li(
-            strong("Framework: "),
-            "We used the ",
-            tags$a(href = "https://ellmer.tidyverse.org/", "ellmer package", target = "_blank"),
-            " to create connections to various models and the ",
-            tags$a(href = "https://vitals.tidyverse.org/", "vitals package", target = "_blank"),
-            " to evaluate model performance."
-          ),
-          tags$li(
-            strong("Dataset: "),
-            "Models were tested on the ", code("are"), " dataset (", strong("A"), "n ",
-            strong("R"), " ", strong("E"), "val), which contains challenging R coding problems ",
-            "and their solutions."
-          ),
-          tags$li(
-            strong("Scoring: "),
-            "Each model's solution was scored by Claude 3.7 Sonnet as either Incorrect, ",
-            "Partially Correct, or Correct."
-          ),
-          tags$li(
-            strong("Evaluation runs: "),
-            "Each model completed 3 runs (epochs) on the dataset to account for variability."
-          )
-        ),
-
-        h4("How to Use This App"),
-        tags$ul(
-          tags$li("Use the sidebar to select which models you want to compare"),
-          tags$li(strong("Performance tab: "), "View the distribution of correct, partially correct, and incorrect solutions"),
-          tags$li(strong("Cost vs Performance tab: "), "Compare model accuracy against the actual cost incurred during evaluation"),
-          tags$li(strong("Pricing Details tab: "), "Explore detailed pricing and token usage with sortable, searchable table")
-        ),
-
-        h4("Resources"),
-        tags$ul(
-          tags$li(
-            tags$a(
-              href = "https://posit.co/blog/r-llm-evaluation/",
-              "Read the full blog post about R code generation",
-              target = "_blank"
-            )
-          ),
-          tags$li(
-            tags$a(
-              href = "https://posit.co/blog/python-llm-evaluation/",
-              "Read about Python (Pandas) code generation evaluation",
-              target = "_blank"
-            )
-          ),
-          tags$li(
-            tags$a(
-              href = "https://github.com/skaltman/model-eval-r",
-              "View the evaluation code on GitHub",
-              target = "_blank"
-            )
-          )
-        ),
-
-        hr(),
-
-        p(
-          class = "text-muted small",
-          "Note: Pricing reflects per-million-token costs and actual charges incurred during the evaluation. ",
-          "Token usage can vary significantly between models, especially for reasoning models which typically ",
-          "generate more output tokens."
-        )
+        includeMarkdown("about.md")
       ),
       NULL
     )
   )
 )
 
-# ============================================================================
-# Server
-# ============================================================================
+# Server ---------------------------------------------------------------------
 
 server <- function(input, output, session) {
-
   # Reactive: Filtered evaluation data
   filtered_eval <- reactive({
     req(input$selected_models)
@@ -245,9 +162,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # ============================================================================
-  # Outputs
-  # ============================================================================
+  # Outputs ---------------------------------------------------------------------
 
   # Performance plot (stacked bar chart)
   output$performance_plot <- renderPlot({
@@ -328,8 +243,5 @@ server <- function(input, output, session) {
   })
 }
 
-# ============================================================================
-# Run App
-# ============================================================================
 
 shinyApp(ui = ui, server = server)
