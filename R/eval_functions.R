@@ -61,6 +61,13 @@ parse_model_configs <- function(yaml_path) {
 #' @return Character vector of model_ids that have NOT been evaluated
 find_unevaluated_models <- function(model_configs, results_dir) {
   all_model_ids <- names(model_configs)
+
+  # Create results_dir if it doesn't exist
+  if (!dir_exists(results_dir)) {
+    dir_create(results_dir)
+    return(all_model_ids)  # All models are unevaluated
+  }
+
   existing_files <- dir_ls(results_dir, glob = "*.rds") %>%
     path_file() %>%
     path_ext_remove()
