@@ -8,9 +8,9 @@ library(yaml)
 
 #' Load model info (pricing, provider, and release date) from YAML file
 #'
-#' @param yaml_path Path to model_info.yaml file
-#' @return A tibble with columns: Name, model_join, provider, release_date, Input, Output
-load_model_info <- function(yaml_path = "data/model_info.yaml") {
+#' @param yaml_path Path to models.yaml file
+#' @return A tibble with columns: Name, model_join, provider, release_date, Input, Output, api_model_id
+load_model_info <- function(yaml_path = "data/models.yaml") {
   prices_raw <- read_yaml(yaml_path)
 
   prices_raw$models |>
@@ -21,7 +21,8 @@ load_model_info <- function(yaml_path = "data/model_info.yaml") {
         provider = model$provider,
         release_date = model$release_date,
         Input = model$input_price,
-        Output = model$output_price
+        Output = model$output_price,
+        api_model_id = model$api_model_id %||% NA_character_
       )
     })
 }
