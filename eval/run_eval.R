@@ -4,7 +4,7 @@
 
 library(ellmer)
 library(vitals)
-library(tidyverse)
+library(purrr)
 library(glue)
 
 # Source helper functions

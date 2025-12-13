@@ -1,7 +1,9 @@
 # Data Loading and Processing Functions for Shiny App
 # ============================================================================
 
-library(tidyverse)
+library(purrr)
+library(dplyr)
+library(tibble)
 library(vitals)
 library(fs)
 library(yaml)
