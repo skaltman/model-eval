@@ -7,35 +7,41 @@ models:
     output_price: 15 
     api_model_id: anthropic/claude-sonnet-4-20250514 
 
-  - name: Claude Sonnet 4 
-    model_id: sonnet_4_thinking 
-    provider: Anthropic 
-    release_date: 2025-05-22 
-    input_price: 3 
-    output_price: 15 
-    api_model_id: anthropic/claude-sonnet-4-20250514 
-    thinking: true 
-    thinking_budget: 2000 
+  - name: Claude Sonnet 4
+    model_id: sonnet_4_thinking
+    provider: Anthropic
+    release_date: 2025-05-22
+    input_price: 3
+    output_price: 15
+    api_model_id: anthropic/claude-sonnet-4-20250514
+    api_args:
+      thinking:
+        type: enabled
+        budget_tokens: 2000 
 
-  - name: Claude Sonnet 4.5 
-    model_id: sonnet_4_5_thinking 
-    provider: Anthropic 
-    release_date: 2025-09-29 
-    input_price: 3 
-    output_price: 15 
-    api_model_id: anthropic/claude-sonnet-4-5-20250929 
-    thinking: true 
-    thinking_budget: 2000 
+  - name: Claude Sonnet 4.5
+    model_id: sonnet_4_5_thinking
+    provider: Anthropic
+    release_date: 2025-09-29
+    input_price: 3
+    output_price: 15
+    api_model_id: anthropic/claude-sonnet-4-5-20250929
+    api_args:
+      thinking:
+        type: enabled
+        budget_tokens: 2000 
 
-  - name: Claude Opus 4.1 
-    model_id: opus_4_1_thinking 
-    provider: Anthropic 
-    release_date: 2025-08-05 
-    input_price: 15 
-    output_price: 75 
-    api_model_id: anthropic/claude-opus-4-1-20250805 
-    thinking: true 
-    thinking_budget: 2000 
+  - name: Claude Opus 4.1
+    model_id: opus_4_1_thinking
+    provider: Anthropic
+    release_date: 2025-08-05
+    input_price: 15
+    output_price: 75
+    api_model_id: anthropic/claude-opus-4-1-20250805
+    api_args:
+      thinking:
+        type: enabled
+        budget_tokens: 2000 
 
   - name: Claude Opus 4.5 
     model_id: opus_4_5 
@@ -45,15 +51,17 @@ models:
     output_price: 25 
     api_model_id: anthropic/claude-opus-4-5-20251101 
 
-  - name: Claude Haiku 4.5 
-    model_id: haiku_4_5_thinking 
-    provider: Anthropic 
-    release_date: 2025-10-15 
-    input_price: 1 
-    output_price: 5 
-    api_model_id: anthropic/claude-haiku-4-5-20251001 
-    thinking: true 
-    thinking_budget: 2000 
+  - name: Claude Haiku 4.5
+    model_id: haiku_4_5_thinking
+    provider: Anthropic
+    release_date: 2025-10-15
+    input_price: 1
+    output_price: 5
+    api_model_id: anthropic/claude-haiku-4-5-20251001
+    api_args:
+      thinking:
+        type: enabled
+        budget_tokens: 2000 
 
   - name: o3 
     model_id: gpt_o3 
@@ -81,13 +89,24 @@ models:
     output_price: 8 
     api_model_id: openai/gpt-4.1-2025-04-14 
 
-  - name: GPT-5.1 
-    model_id: gpt_5_1 
-    provider: OpenAI 
-    release_date: 2025-11-10 
-    input_price: 1.25 
-    output_price: 10 
-    api_model_id: openai/gpt-5.1 
+  - name: GPT-5.1
+    model_id: gpt_5_1
+    provider: OpenAI
+    release_date: 2025-11-10
+    input_price: 1.25
+    output_price: 10
+    api_model_id: openai/gpt-5.1
+
+  - name: GPT-5.1 (reasoning medium)
+    model_id: gpt_5_1_reasoning_medium
+    provider: OpenAI
+    release_date: 2025-11-10
+    input_price: 1.25
+    output_price: 10
+    api_model_id: openai/gpt-5.1
+    api_args:
+      reasoning:
+        effort: medium
 
   - name: GPT-5.1 Codex 
     model_id: gpt_5_1_codex 
@@ -115,13 +134,24 @@ models:
     api_model_id: openai/o3-mini-2025-01-31 
     base_url: https://api.openai.com/v1/responses 
 
-  - name: GPT-5 
-    model_id: gpt_5 
-    provider: OpenAI 
-    release_date: 2025-08-05 
-    input_price: 1.25 
-    output_price: 10 
-    api_model_id: openai/gpt-5 
+  - name: GPT-5
+    model_id: gpt_5
+    provider: OpenAI
+    release_date: 2025-08-05
+    input_price: 1.25
+    output_price: 10
+    api_model_id: openai/gpt-5
+
+  - name: GPT-5 (reasoning medium)
+    model_id: gpt_5_reasoning_medium
+    provider: OpenAI
+    release_date: 2025-08-05
+    input_price: 1.25
+    output_price: 10
+    api_model_id: openai/gpt-5
+    api_args:
+      reasoning:
+        effort: medium
 
   - name: GPT-5 mini 
     model_id: gpt_5_mini 
@@ -189,5 +219,16 @@ models:
     release_date: 2025-12-11
     input_price: 1.75
     output_price: 14
-    api_model_id: openai/gpt-5.2 
+    api_model_id: openai/gpt-5.2
+
+  - name: GPT-5.2 (reasoning medium)
+    model_id: gpt_5_2_reasoning_medium
+    provider: OpenAI
+    release_date: 2025-12-11
+    input_price: 1.75
+    output_price: 14
+    api_model_id: openai/gpt-5.2
+    api_args:
+      reasoning:
+        effort: medium
 
