@@ -15,7 +15,7 @@ source(here::here("R/eval_functions.R"))
 # Configuration
 YAML_PATH <- here::here("data/models.yaml")
 RESULTS_DIR <- here::here("results_rds")
-LOG_DIR <- here::here("logs/yaml_eval")
+LOG_DIR <- here::here("logs")
 SCORER_MODEL <- "claude-3-7-sonnet-latest"
 
 # Set up logging
@@ -41,7 +41,8 @@ if (length(unevaluated) > 0) {
     model_configs = model_configs,
     unevaluated_ids = unevaluated,
     model_eval_fn = model_eval,
-    results_dir = RESULTS_DIR
+    results_dir = RESULTS_DIR,
+    scorer_chat = scorer_chat
   )
 
   # Report failures only

@@ -65,7 +65,7 @@ find_unevaluated_models <- function(model_configs, results_dir) {
   # Create results_dir if it doesn't exist
   if (!dir_exists(results_dir)) {
     dir_create(results_dir)
-    return(all_model_ids)  # All models are unevaluated
+    return(all_model_ids) # All models are unevaluated
   }
 
   existing_files <- dir_ls(results_dir, glob = "*.rds") %>%
@@ -99,14 +99,9 @@ build_chat_args <- function(config) {
     args$api_key <- api_key
   }
 
-  # Add thinking configuration if enabled
-  if (config$thinking) {
-    args$api_args <- list(
-      thinking = list(
-        type = "enabled",
-        budget_tokens = config$thinking_budget
-      )
-    )
+  # Add api_args if specified in YAML
+  if (!is.null(config$api_args)) {
+    args$api_args <- config$api_args
   }
 
   args
@@ -122,8 +117,15 @@ build_chat_args <- function(config) {
 #' @param config Model configuration
 #' @param model_eval_fn The model_eval function to call
 #' @param results_dir Directory to save results
+#' @param scorer_chat Chat object used for model-graded scoring
 #' @return TRUE if successful, FALSE if failed
-run_single_eval <- function(model_id, config, model_eval_fn, results_dir) {
+run_single_eval <- function(
+  model_id,
+  config,
+  model_eval_fn,
+  results_dir,
+  scorer_chat
+) {
   message(glue("\n{strrep('=', 70)}"))
   message(glue("Evaluating: {config$name} ({model_id})"))
   message(glue("API Model: {config$api_model_id}"))
@@ -141,6 +143,7 @@ run_single_eval <- function(model_id, config, model_eval_fn, results_dir) {
           list(
             model = config$api_model_id,
             filename = model_id,
+            scorer_chat = scorer_chat,
             overwrite = FALSE # Don't overwrite existing results
           ),
           chat_args
@@ -166,12 +169,14 @@ run_single_eval <- function(model_id, config, model_eval_fn, results_dir) {
 #' @param unevaluated_ids Vector of model_ids to evaluate
 #' @param model_eval_fn The model_eval function to call
 #' @param results_dir Directory to save results
+#' @param scorer_chat Chat object used for model-graded scoring
 #' @return Named logical vector (TRUE = success, FALSE = failure)
 run_all_evals <- function(
   model_configs,
   unevaluated_ids,
   model_eval_fn,
-  results_dir
+  results_dir,
+  scorer_chat
 ) {
   if (length(unevaluated_ids) == 0) {
     message("No models to evaluate. All models have existing results.")
@@ -190,7 +195,7 @@ run_all_evals <- function(
     unevaluated_ids,
     function(model_id) {
       config <- model_configs[[model_id]]
-      run_single_eval(model_id, config, model_eval_fn, results_dir)
+      run_single_eval(model_id, config, model_eval_fn, results_dir, scorer_chat)
     }
   )
 
@@ -236,7 +241,7 @@ combine_results <- function(
       are_eval_full <- process_eval_data_fn(tasks, model_info)
 
       # Extract minimal data for app
-      eval_data_minimal <- are_eval_full %>%
+      eval_data_minimal <- are_eval_full |>
         select(model_join, model_display, score)
 
       # Compute cost data

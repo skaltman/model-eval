@@ -36,7 +36,7 @@ load_model_info <- function(yaml_path = "data/models.yaml") {
 load_eval_results <- function(results_dir = "results_rds") {
   dir_ls(results_dir, glob = "*.rds") |>
     set_names(\(x) path_ext_remove(basename(x))) |>
-    map(read_rds)
+    map(readr::read_rds)
 }
 
 #' Process evaluation data into tidy format
@@ -67,8 +67,8 @@ process_eval_data <- function(tasks, model_info) {
         model_raw # fallback to raw if not in YAML
       ) |>
         as.factor(),
-      score = fct_recode(
-        score,
+      score = forcats::fct_recode(
+        as.factor(score),
         "Correct" = "C",
         "Partially Correct" = "P",
         "Incorrect" = "I"
@@ -86,7 +86,7 @@ compute_cost_data <- function(tasks, model_prices) {
     imap(\(x, idx) x$get_cost() |> mutate(model_join = idx)) |>
     list_rbind() |>
     filter(source != "scorer") |>
-    mutate(price = str_extract(price, "\\d+\\.\\d+") |> as.double()) |>
+    mutate(price = stringr::str_extract(price, "\\d+\\.\\d+") |> as.double()) |>
     left_join(model_prices, by = "model_join") |>
     mutate(
       price = if_else(
