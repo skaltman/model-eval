@@ -9,24 +9,51 @@ library(fs)
 library(yaml)
 
 #' Load model info (pricing, provider, and release date) from YAML file
+#' Generates default and standardized variants for each model
 #'
 #' @param yaml_path Path to models.yaml file
-#' @return A tibble with columns: Name, model_join, provider, release_date, Input, Output, api_model_id
+#' @return A tibble with columns: Name, model_join, provider, release_date, Input, Output, api_model_id, configuration
 load_model_info <- function(yaml_path = "data/models.yaml") {
   prices_raw <- read_yaml(yaml_path)
 
   prices_raw$models |>
-    map_dfr(\(model) {
-      tibble(
+    map(\(model) {
+      # Shared fields
+      base_info <- list(
         Name = model$name,
-        model_join = model$model_id,
         provider = model$provider,
         release_date = model$release_date,
         Input = model$input_price,
         Output = model$output_price,
         api_model_id = model$api_model_id %||% NA_character_
       )
-    })
+
+      # List to collect variants
+      variants <- list()
+
+      # Default variant (always)
+      default_variant <- c(base_info, list(
+        model_join = model$model_id,
+        configuration = "default",
+        default_params_description = model$default_params_description %||% NA_character_
+      ))
+      variants <- append(variants, list(default_variant))
+
+      # Alternative config variants (if specified)
+      if (!is.null(model$alternative_configs)) {
+        for (alt_config in model$alternative_configs) {
+          alt_variant <- c(base_info, list(
+            model_join = paste0(model$model_id, "_", alt_config$config_name),
+            configuration = alt_config$config_name
+          ))
+          variants <- append(variants, list(alt_variant))
+        }
+      }
+
+      variants
+    }) |>
+    flatten() |>
+    map_dfr(\(variant) as_tibble(variant))
 }
 
 #' Load all evaluation results from RDS files
@@ -43,11 +70,25 @@ load_eval_results <- function(results_dir = "results_rds") {
 #'
 #' @param tasks Named list of Task objects from load_eval_results()
 #' @param model_info Model info tibble from load_model_info()
-#' @return Tibble with columns: model_join, model_display, score, etc.
+#' @return Tibble with columns: model_join, model_display_base, model_display_full, score, etc.
 process_eval_data <- function(tasks, model_info) {
-  # Extract model name mapping from model_info
-  model_lookup <- model_info |>
+  # Extract base model name (for grouping)
+  base_name_lookup <- model_info |>
     select(model_id = model_join, display_name = Name) |>
+    deframe()
+
+  # Extract full display name with config suffix (for plotting)
+  full_name_lookup <- model_info |>
+    select(model_id = model_join, display_name = Name, configuration) |>
+    mutate(
+      display_name = case_when(
+        configuration == "default" ~ display_name,
+        configuration == "thinking_1024" ~ paste0(display_name, " (thinking 1024)"),
+        configuration == "reasoning_medium" ~ paste0(display_name, " (reasoning medium)"),
+        TRUE ~ paste0(display_name, " (", configuration, ")")
+      )
+    ) |>
+    select(model_id, display_name) |>
     deframe()
 
   tasks |>
@@ -60,11 +101,17 @@ process_eval_data <- function(tasks, model_info) {
     list_rbind() |>
     mutate(
       model_join = model_raw,
-      # Use the lookup table from model_info.yaml
+      # Base name for grouping in sidebar
+      model_display_base = if_else(
+        model_raw %in% names(base_name_lookup),
+        base_name_lookup[model_raw],
+        model_raw
+      ),
+      # Full name with config for plot labels
       model_display = if_else(
-        model_raw %in% names(model_lookup),
-        model_lookup[model_raw],
-        model_raw # fallback to raw if not in YAML
+        model_raw %in% names(full_name_lookup),
+        full_name_lookup[model_raw],
+        model_raw
       ) |>
         as.factor(),
       score = forcats::fct_recode(

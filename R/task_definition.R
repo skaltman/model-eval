@@ -18,7 +18,11 @@ create_are_task <- function(scorer_chat) {
     solver = generate(),
     scorer = model_graded_qa(
       scorer_chat = scorer_chat,
-      partial_credit = TRUE
+      partial_credit = TRUE,
+      instructions = "After assessing the submitted answer, reply with 'GRADE: $LETTER' where LETTER is one of C, P, or I.
+Please choose ONE option: either 'C' for correct answers, \"P\" for partially correct answers, or 'I' for incorrect answers.
+First **briefly** explain your reasoning, then end with GRADE: $LETTER.
+Do not format the grading string and do not include any punctuation or exposition after it."
     ),
     epochs = 3, # Run 3 evaluation rounds
     name = "An R Eval"

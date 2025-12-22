@@ -8,7 +8,7 @@ library(dplyr)
 # YAML parsing
 # ============================================================================
 
-#' Parse YAML and extract model configurations
+#' Parse YAML and extract model configurations, generating default and standardized variants
 #'
 #' @param yaml_path Path to model_info.yaml
 #' @return List of model configs, each with evaluation parameters
@@ -34,20 +34,48 @@ parse_model_configs <- function(yaml_path) {
         ))
       }
 
-      # Build config with defaults for optional fields
-      config <- list(
+      # Shared fields for all variants
+      base_config <- list(
         name = model$name,
-        model_id = model$model_id,
         api_model_id = model$api_model_id,
         provider = model$provider,
-        thinking = model$thinking %||% FALSE,
-        thinking_budget = model$thinking_budget %||% 2000,
         base_url = model$base_url %||% NULL,
-        api_key_env = model$api_key_env %||% NULL
+        api_key_env = model$api_key_env %||% NULL,
+        reasoning_type = model$reasoning_type %||% NULL
       )
 
-      config
-    })
+      # List to collect variants
+      variants <- list()
+
+      # Create default variant (always)
+      default_variant <- c(
+        base_config,
+        list(
+          model_id = model$model_id,
+          configuration = "default",
+          api_args = NULL
+        )
+      )
+      variants <- append(variants, list(default_variant))
+
+      # Create alternative config variants (if specified)
+      if (!is.null(model$alternative_configs)) {
+        for (alt_config in model$alternative_configs) {
+          alt_variant <- c(
+            base_config,
+            list(
+              model_id = paste0(model$model_id, "_", alt_config$config_name),
+              configuration = alt_config$config_name,
+              api_args = alt_config$api_args
+            )
+          )
+          variants <- append(variants, list(alt_variant))
+        }
+      }
+
+      variants
+    }) %>%
+    flatten()
 
   # Name the list by model_id for easy lookup
   names(models) <- map_chr(models, "model_id")
@@ -242,7 +270,7 @@ combine_results <- function(
 
       # Extract minimal data for app
       eval_data_minimal <- are_eval_full |>
-        select(model_join, model_display, score)
+        select(model_join, model_display_base, model_display, score)
 
       # Compute cost data
       are_costs <- compute_cost_data_fn(tasks, model_info)

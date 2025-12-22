@@ -1,6 +1,11 @@
 # Runs the `are` eval for models listed in data/models.yaml
 # Will skip models that have already been run (by looking in results_rds)
 # Combines all rds results into data/data_combined.rds
+#
+# Usage:
+#   Rscript eval/run_eval.R                    # Run all unevaluated models
+#   Rscript eval/run_eval.R --provider=Google  # Run only Google models
+#   Rscript eval/run_eval.R --provider=Anthropic
 
 library(ellmer)
 library(vitals)
@@ -16,7 +21,19 @@ source(here::here("R/eval_functions.R"))
 YAML_PATH <- here::here("data/models.yaml")
 RESULTS_DIR <- here::here("results_rds")
 LOG_DIR <- here::here("logs")
-SCORER_MODEL <- "claude-3-7-sonnet-latest"
+SCORER_MODEL <- "anthropic/claude-sonnet-4-20250514"
+
+# Parse command line arguments
+args <- commandArgs(trailingOnly = TRUE)
+provider_filter <- NULL
+
+if (length(args) > 0) {
+  provider_arg <- args[grep("^--provider=", args)]
+  if (length(provider_arg) > 0) {
+    provider_filter <- sub("^--provider=", "", provider_arg[1])
+    message(glue("Filtering to provider: {provider_filter}"))
+  }
+}
 
 # Set up logging
 vitals::vitals_log_dir_set(LOG_DIR)
@@ -28,6 +45,21 @@ vitals::vitals_log_dir_set(LOG_DIR)
 # Parse YAML configuration
 model_configs <- parse_model_configs(YAML_PATH)
 
+# Filter by provider if specified
+if (!is.null(provider_filter)) {
+  providers <- map_chr(model_configs, "provider")
+  matching <- providers == provider_filter
+
+  if (sum(matching) == 0) {
+    stop(glue("No models found for provider: {provider_filter}"))
+  }
+
+  model_configs <- model_configs[matching]
+  message(glue(
+    "Found {length(model_configs)} model(s) for provider {provider_filter}"
+  ))
+}
+
 # Find unevaluated models
 unevaluated <- find_unevaluated_models(model_configs, RESULTS_DIR)
 
@@ -35,7 +67,7 @@ unevaluated <- find_unevaluated_models(model_configs, RESULTS_DIR)
 if (length(unevaluated) > 0) {
   message(glue("Running {length(unevaluated)} unevaluated model(s)..."))
 
-  scorer_chat <- chat_anthropic(model = SCORER_MODEL)
+  scorer_chat <- chat(name = SCORER_MODEL)
 
   eval_results <- run_all_evals(
     model_configs = model_configs,

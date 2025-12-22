@@ -12,11 +12,11 @@ library(forcats)
 #' Get list of available models for selection
 #'
 #' @param eval_data Processed evaluation data
-#' @return Tibble with model_display and model_join columns
+#' @return Tibble with model_display_base, model_display, and model_join columns
 get_available_models <- function(eval_data) {
   eval_data |>
-    distinct(model_display, model_join) |>
-    arrange(model_display)
+    distinct(model_display_base, model_display, model_join) |>
+    arrange(model_display_base, model_display)
 }
 
 #' Compute summary statistics for selected models
@@ -61,16 +61,7 @@ compute_summary_stats <- function(
 #' @param eval_data Filtered evaluation data with model_display and score columns
 #' @return ggplot object
 plot_performance <- function(eval_data) {
-  # Reorder models by correct count
-  eval_data <- eval_data |>
-    mutate(
-      model_display = fct_reorder(
-        model_display,
-        score,
-        .fun = \(x) sum(x == "Correct", na.rm = TRUE)
-      )
-    )
-
+  # Ordering is already established in the data's factor levels
   eval_data |>
     ggplot(aes(y = model_display, fill = score)) +
     geom_bar(position = "fill") +
