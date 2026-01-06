@@ -73,45 +73,41 @@ models:
   # OpenAI Models - O-series (Inherent Reasoning, No Toggle)
   # ============================================================================
 
-  # - name: o1
-  #   model_id: gpt_o1
-  #   provider: OpenAI
-  #   release_date: 2024-12-16
-  #   input_price: 15
-  #   output_price: 60
-  #   api_model_id: openai/o1-2024-12-17
-  #   base_url: https://api.openai.com/v1/responses
-  #   reasoning_type: native
+  - name: o1
+    model_id: gpt_o1
+    provider: OpenAI
+    release_date: 2024-12-16
+    input_price: 15
+    output_price: 60
+    api_model_id: openai/o1-2024-12-17
+    reasoning_type: native
 
-  # - name: o3
-  #   model_id: gpt_o3
-  #   provider: OpenAI
-  #   release_date: 2025-04-09
-  #   input_price: 10
-  #   output_price: 40
-  #   api_model_id: openai/o3-2025-04-16
-  #   base_url: https://api.openai.com/v1/responses
-  #   reasoning_type: native
+  - name: o3
+    model_id: gpt_o3
+    provider: OpenAI
+    release_date: 2025-04-09
+    input_price: 10
+    output_price: 40
+    api_model_id: openai/o3-2025-04-16
+    reasoning_type: native
 
-  # - name: o3-mini
-  #   model_id: gpt_o3_mini
-  #   provider: OpenAI
-  #   release_date: 2025-01-17
-  #   input_price: 1.1
-  #   output_price: 4.4
-  #   api_model_id: openai/o3-mini-2025-01-31
-  #   base_url: https://api.openai.com/v1/responses
-  #   reasoning_type: native
+  - name: o3-mini
+    model_id: gpt_o3_mini
+    provider: OpenAI
+    release_date: 2025-01-17
+    input_price: 1.1
+    output_price: 4.4
+    api_model_id: openai/o3-mini-2025-01-31
+    reasoning_type: native
 
-  # - name: o4-mini
-  #   model_id: gpt_o4_mini
-  #   provider: OpenAI
-  #   release_date: 2025-04-09
-  #   input_price: 1.1
-  #   output_price: 4.4
-  #   api_model_id: openai/o4-mini-2025-04-16
-  #   base_url: https://api.openai.com/v1/responses
-  #   reasoning_type: native
+  - name: o4-mini
+    model_id: gpt_o4_mini
+    provider: OpenAI
+    release_date: 2025-04-09
+    input_price: 1.1
+    output_price: 4.4
+    api_model_id: openai/o4-mini-2025-04-16
+    reasoning_type: native
 
   # # ============================================================================
   # # OpenAI Models - GPT Series (Support Reasoning)
@@ -237,3 +233,12 @@ models:
     output_price: 12
     api_model_id: google_gemini/gemini-3-pro-preview
     default_params_description: "Default parameters"
+
+  - name: Gemini 3 Flash 
+    model_id: gemini_3_flash
+    provider: Google 
+    release_date: 2025-12-17
+    input_price: 0.5
+    output_price: 3.00
+    api_model_id: google_gemini/gemini-flash-latest 
+
