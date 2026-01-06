@@ -81,6 +81,7 @@ models:
     output_price: 60
     api_model_id: openai/o1-2024-12-17
     reasoning_type: native
+    default_params_description: "Implicit reasoning"
 
   - name: o3
     model_id: gpt_o3
@@ -90,6 +91,7 @@ models:
     output_price: 40
     api_model_id: openai/o3-2025-04-16
     reasoning_type: native
+    default_params_description: "Implicit reasoning"
 
   - name: o3-mini
     model_id: gpt_o3_mini
@@ -99,6 +101,7 @@ models:
     output_price: 4.4
     api_model_id: openai/o3-mini-2025-01-31
     reasoning_type: native
+    default_params_description: "Implicit reasoning"
 
   - name: o4-mini
     model_id: gpt_o4_mini
@@ -108,6 +111,7 @@ models:
     output_price: 4.4
     api_model_id: openai/o4-mini-2025-04-16
     reasoning_type: native
+    default_params_description: "Implicit reasoning"
 
   # # ============================================================================
   # # OpenAI Models - GPT Series (Support Reasoning)
@@ -223,7 +227,7 @@ models:
     input_price: 1.25
     output_price: 10
     api_model_id: google_gemini/gemini-2.5-pro
-    default_params_description: "Default parameters"
+    default_params_description: "Dynamic thinking"
 
   - name: Gemini 3 Pro
     model_id: gemini_3
@@ -232,13 +236,14 @@ models:
     input_price: 2
     output_price: 12
     api_model_id: google_gemini/gemini-3-pro-preview
-    default_params_description: "Default parameters"
+    default_params_description: "Dynamic thinking (level: high)"
 
-  - name: Gemini 3 Flash 
+  - name: Gemini 3 Flash
     model_id: gemini_3_flash
-    provider: Google 
+    provider: Google
     release_date: 2025-12-17
     input_price: 0.5
     output_price: 3.00
-    api_model_id: google_gemini/gemini-flash-latest 
+    api_model_id: google_gemini/gemini-flash-latest
+    default_params_description: "Dynamic thinking (level: high)" 
 

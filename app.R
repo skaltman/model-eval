@@ -8,6 +8,7 @@ library(purrr)
 
 # Source plotting and data helper functions
 source("R/helpers.R")
+source("R/data_loading.R")
 
 # Load Data ------------------------------------------------------------------
 
@@ -16,7 +17,9 @@ app_data <- readr::read_rds(here::here("data/data_combined.rds"))
 
 are_eval_full <- app_data$eval_data
 are_costs <- app_data$cost_data
-model_info <- app_data$model_info
+
+# Load model_info directly from YAML (so changes are reflected immediately)
+model_info <- load_model_info(here::here("data/models.yaml"))
 
 # Get available models
 available_models <- get_available_models(are_eval_full)
@@ -154,7 +157,8 @@ ui <- tagList(
       div(
         style = "padding-top: 20px;",
         h2("About this evaluation"),
-        includeMarkdown("about.md")
+        includeMarkdown("about.md"),
+        uiOutput("model_config_table")
       ),
       NULL
     )
@@ -436,6 +440,60 @@ server <- function(input, output, session) {
     req(nrow(eval_summary()) > 0)
 
     create_pricing_table(eval_summary(), model_info)
+  })
+
+  # Model configuration table for About page
+  output$model_config_table <- renderUI({
+    # Get unique models with their default config descriptions
+    config_data <- model_info |>
+      filter(configuration == "default") |>
+      select(Name, provider, default_params_description) |>
+      arrange(provider, desc(Name))
+
+    # Build HTML tables grouped by provider
+    providers <- unique(config_data$provider)
+
+    table_html <- map(providers, \(prov) {
+      prov_data <- config_data |> filter(provider == prov)
+
+      rows <- map_chr(seq_len(nrow(prov_data)), \(i) {
+        border_style <- if (i < nrow(prov_data)) "border-bottom: 1px solid #eee;" else ""
+        sprintf(
+          '<tr style="%s"><td style="padding: 0.5rem 0.75rem;">%s</td><td style="padding: 0.5rem 0.75rem;">%s</td></tr>',
+          border_style,
+          prov_data$Name[i],
+          prov_data$default_params_description[i] %||% "—"
+        )
+      }) |> paste(collapse = "\n")
+
+      sprintf(
+        '<h4 style="color: #6c757d; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; margin-top: 1.5rem;">%s</h4>
+        <table style="width: 100%%; border-collapse: collapse; font-size: 0.95rem; margin-bottom: 1rem;">
+        <thead>
+        <tr style="border-bottom: 2px solid #dee2e6;">
+        <th style="text-align: left; padding: 0.5rem 0.75rem; font-weight: 600;">Model</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; font-weight: 600;">Default</th>
+        </tr>
+        </thead>
+        <tbody>
+        %s
+        </tbody>
+        </table>',
+        prov,
+        rows
+      )
+    }) |> paste(collapse = "\n")
+
+    # Add resources section at the end
+    resources_html <- '
+    <h2 style="margin-top: 2rem;">Resources</h2>
+    <ul>
+    <li><a href="https://posit.co/blog/r-llm-evaluation-03/">Read the blog post</a></li>
+    <li><a href="https://github.com/skaltman/model-eval-r">View the evaluation code on GitHub</a></li>
+    </ul>
+    '
+
+    HTML(paste(table_html, resources_html, collapse = "\n"))
   })
 }
 
