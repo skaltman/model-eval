@@ -30,7 +30,7 @@ available_models_with_provider <- available_models |>
 
 # Models to select at startup
 default_selected <- c(
-  "opus_4_5",
+  "opus_4_6",
   "haiku_4_5_thinking",
   "sonnet_4_5_thinking",
   "gemini_3",

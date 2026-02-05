@@ -43,13 +43,21 @@ models:
         type: enabled
         budget_tokens: 2000 
 
-  - name: Claude Opus 4.5 
-    model_id: opus_4_5 
-    provider: Anthropic 
-    release_date: 2025-11-24 
-    input_price: 5 
-    output_price: 25 
-    api_model_id: anthropic/claude-opus-4-5-20251101 
+  - name: Claude Opus 4.5
+    model_id: opus_4_5
+    provider: Anthropic
+    release_date: 2025-11-24
+    input_price: 5
+    output_price: 25
+    api_model_id: anthropic/claude-opus-4-5-20251101
+
+  - name: Claude Opus 4.6
+    model_id: opus_4_6
+    provider: Anthropic
+    release_date: 2026-02-05
+    input_price: 5
+    output_price: 25
+    api_model_id: anthropic/claude-opus-4-6 
 
   - name: Claude Haiku 4.5
     model_id: haiku_4_5_thinking
