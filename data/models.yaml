@@ -1,26 +1,7 @@
 models:
-  - name: Claude Sonnet 4 (No Thinking) 
-    model_id: sonnet_4 
-    provider: Anthropic 
-    release_date: 2025-05-22 
-    input_price: 3 
-    output_price: 15 
-    api_model_id: anthropic/claude-sonnet-4-20250514 
-
-  - name: Claude Sonnet 4
-    model_id: sonnet_4_thinking
-    provider: Anthropic
-    release_date: 2025-05-22
-    input_price: 3
-    output_price: 15
-    api_model_id: anthropic/claude-sonnet-4-20250514
-    api_args:
-      thinking:
-        type: enabled
-        budget_tokens: 2000 
 
   - name: Claude Sonnet 4.5
-    model_id: sonnet_4_5_thinking
+    model_id: sonnet_4_5
     provider: Anthropic
     release_date: 2025-09-29
     input_price: 3
@@ -29,27 +10,7 @@ models:
     api_args:
       thinking:
         type: enabled
-        budget_tokens: 2000 
-
-  - name: Claude Opus 4.1
-    model_id: opus_4_1_thinking
-    provider: Anthropic
-    release_date: 2025-08-05
-    input_price: 15
-    output_price: 75
-    api_model_id: anthropic/claude-opus-4-1-20250805
-    api_args:
-      thinking:
-        type: enabled
-        budget_tokens: 2000 
-
-  - name: Claude Opus 4.5
-    model_id: opus_4_5
-    provider: Anthropic
-    release_date: 2025-11-24
-    input_price: 5
-    output_price: 25
-    api_model_id: anthropic/claude-opus-4-5-20251101
+        budget_tokens: 2000
 
   - name: Claude Opus 4.6
     model_id: opus_4_6
@@ -57,10 +18,18 @@ models:
     release_date: 2026-02-05
     input_price: 5
     output_price: 25
-    api_model_id: anthropic/claude-opus-4-6 
+    api_model_id: anthropic/claude-opus-4-6
+
+  - name: Claude Opus 4.7
+    model_id: opus_4_7
+    provider: Anthropic
+    release_date: 2026-04-16
+    input_price: 5
+    output_price: 25
+    api_model_id: anthropic/claude-opus-4-7
 
   - name: Claude Haiku 4.5
-    model_id: haiku_4_5_thinking
+    model_id: haiku_4_5
     provider: Anthropic
     release_date: 2025-10-15
     input_price: 1
@@ -69,142 +38,53 @@ models:
     api_args:
       thinking:
         type: enabled
-        budget_tokens: 2000 
+        budget_tokens: 2000
 
-  - name: o3 
-    model_id: gpt_o3 
-    provider: OpenAI 
-    release_date: 2025-04-09 
-    input_price: 10 
-    output_price: 40 
-    api_model_id: openai/o3-2025-04-16 
-    base_url: https://api.openai.com/v1/responses 
+  - name: Gemini 3 Pro
+    model_id: gemini_3
+    provider: Google
+    release_date: 2025-11-18
+    input_price: 2
+    output_price: 12
+    api_model_id: google_gemini/gemini-3-pro-preview
 
-  - name: o4-mini 
-    model_id: gpt_o4_mini 
-    provider: OpenAI 
-    release_date: 2025-04-09 
-    input_price: 1.1 
-    output_price: 4.4 
-    api_model_id: openai/o4-mini-2025-04-16 
-    base_url: https://api.openai.com/v1/responses 
+  - name: Gemini 3 Flash
+    model_id: gemini_3_flash
+    provider: Google
+    release_date: 2025-11-18
+    input_price: 0.15
+    output_price: 0.60
+    api_model_id: google_gemini/gemini-3-flash-preview
 
-  - name: GPT-4.1 
-    model_id: gpt_4_1 
-    provider: OpenAI 
-    release_date: 2025-04-10 
-    input_price: 2 
-    output_price: 8 
-    api_model_id: openai/gpt-4.1-2025-04-14 
+  - name: Gemini 3.1 Pro
+    model_id: gemini_3_1
+    provider: Google
+    release_date: 2026-02-19
+    input_price: 2
+    output_price: 12
+    api_model_id: google_gemini/gemini-3.1-pro-preview
 
-  - name: GPT-5.1
-    model_id: gpt_5_1
+  - name: GPT-5.4
+    model_id: gpt_5_4
     provider: OpenAI
-    release_date: 2025-11-10
-    input_price: 1.25
-    output_price: 10
-    api_model_id: openai/gpt-5.1
+    release_date: 2026-03-05
+    input_price: 2.50
+    output_price: 15
+    api_model_id: openai/gpt-5.4
 
-  - name: GPT-5.1 Codex 
-    model_id: gpt_5_1_codex 
-    provider: OpenAI 
-    release_date: 2025-11-12 
-    input_price: 1.25 
-    output_price: 10 
-    api_model_id: openai/gpt-5.1-codex 
-
-  - name: o1 
-    model_id: gpt_o1 
-    provider: OpenAI 
-    release_date: 2024-12-16 
-    input_price: 15 
-    output_price: 60 
-    api_model_id: openai/o1-2024-12-17 
-    base_url: https://api.openai.com/v1/responses 
-
-  - name: o3-mini 
-    model_id: gpt_o3_mini 
-    provider: OpenAI 
-    release_date: 2025-01-17 
-    input_price: 1.1 
-    output_price: 4.4 
-    api_model_id: openai/o3-mini-2025-01-31 
-    base_url: https://api.openai.com/v1/responses 
-
-  - name: GPT-5
-    model_id: gpt_5
+  - name: GPT-5.4 mini
+    model_id: gpt_5_4_mini
     provider: OpenAI
-    release_date: 2025-08-05
-    input_price: 1.25
-    output_price: 10
-    api_model_id: openai/gpt-5
+    release_date: 2026-03-17
+    input_price: 0.75
+    output_price: 4.50
+    api_model_id: openai/gpt-5.4-mini
 
-  - name: GPT-5 mini 
-    model_id: gpt_5_mini 
-    provider: OpenAI 
-    release_date: 2025-08-05 
-    input_price: 0.25 
-    output_price: 2 
-    api_model_id: openai/gpt-5-mini 
-
-  - name: GPT-5 nano 
-    model_id: gpt_5_nano 
-    provider: OpenAI 
-    release_date: 2025-08-05 
-    input_price: 0.05 
-    output_price: 0.4 
-    api_model_id: openai/gpt-5-nano 
-
-  - name: gpt-oss-20b
-    model_id: gpt_oss_20b
+  - name: GPT-5.5
+    model_id: gpt_5_5
     provider: OpenAI
-    release_date: 2025-08-05
-    input_price: 0
-    output_price: 0
-    api_model_id: openai/gpt-oss-20b
-    base_url: https://br0abwivakn2ibas.us-east-2.aws.endpoints.huggingface.cloud/v1
-    api_key_env: HUGGING_FACE_API_KEY 
-
-  - name: gpt-oss-120b
-    model_id: gpt_oss_120b
-    provider: OpenAI
-    release_date: 2025-08-05
-    input_price: 0
-    output_price: 0
-    api_model_id: openai/gpt-oss-120b
-    base_url: https://nd8rjz8obh824ny0.us-east-2.aws.endpoints.huggingface.cloud/v1
-    api_key_env: HUGGING_FACE_API_KEY 
-
-  - name: Gemini 2.5 Pro 
-    model_id: gemini_2_5 
-    provider: Google 
-    release_date: 2025-06-17 
-    input_price: 1.25 
-    output_price: 10 
-    api_model_id: google_gemini/gemini-2.5-pro 
-
-  - name: Gemini 3 Pro 
-    model_id: gemini_3 
-    provider: Google 
-    release_date: 2025-11-18 
-    input_price: 2 
-    output_price: 12 
-    api_model_id: google_gemini/gemini-3-pro-preview 
-
-  - name: GPT-5.2 Pro 
-    model_id: gpt_5_2_pro 
-    provider: OpenAI 
-    release_date: 2025-12-11 
-    input_price: 21 
-    output_price: 168 
-    api_model_id: openai/gpt-5.2-pro 
-
-  - name: GPT-5.2
-    model_id: gpt_5_2
-    provider: OpenAI
-    release_date: 2025-12-11
-    input_price: 1.75
-    output_price: 14
-    api_model_id: openai/gpt-5.2
-    
+    release_date: 2026-04-23
+    input_price: 5
+    output_price: 30
+    api_model_id: openai/gpt-5.5
 

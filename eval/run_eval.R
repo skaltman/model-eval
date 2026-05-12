@@ -16,7 +16,7 @@ source(here::here("R/eval_functions.R"))
 YAML_PATH <- here::here("data/models.yaml")
 RESULTS_DIR <- here::here("results_rds")
 LOG_DIR <- here::here("logs")
-SCORER_MODEL <- "claude-3-7-sonnet-latest"
+SCORER_MODEL <- "claude-sonnet-4-6"
 
 # Set up logging
 vitals::vitals_log_dir_set(LOG_DIR)
