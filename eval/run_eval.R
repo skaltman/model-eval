@@ -8,9 +8,9 @@ library(purrr)
 library(glue)
 
 # Source helper functions
-source(here::here("R/task_definition.R"))
-source(here::here("R/data_loading.R"))
-source(here::here("R/eval_functions.R"))
+source(here::here("eval/task_definition.R"))
+source(here::here("eval/data_loading.R"))
+source(here::here("eval/eval_functions.R"))
 
 # Configuration
 YAML_PATH <- here::here("data/models.yaml")
