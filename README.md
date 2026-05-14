@@ -6,7 +6,7 @@ This repository evaluates how well different AI models generate R code. The eval
 
 **[View the live app](https://skaltman-model-eval-app.share.connect.posit.cloud)** to compare model performance and costs for a variety of models. 
 
-![](blog-posts/images/app.png)
+![](images/model-eval-app.png)
 
 
 ## Blog posts
@@ -17,7 +17,7 @@ There are also a series of accompanying blog posts which go into more depth abou
 
 * We used [ellmer](https://ellmer.tidyverse.org/) to create connections to the various models and [vitals](https://vitals.tidyverse.org/) to evaluate model performance on R code generation tasks.
 * We tested each model on a shared benchmark: the `are` dataset ("**A**n **R** **E**val"). `are` contains a collection of difficult R coding problems and a column, `target`, with information about the target solution.  
-* Using vitals, we had each model solve each problem in `are`. Then, we scored their solutions using a scoring model (Claude 3.7 Sonnet). Each solution received either an Incorrect, Partially Correct, or Correct score.
+* Using vitals, we had each model solve each problem in `are`. Then, we scored their solutions using a scoring model (Claude 4.6 Sonnet). Each solution received either an Incorrect, Partially Correct, or Correct score.
 
 ## Running Evaluations
 
