@@ -4,7 +4,6 @@
 library(purrr)
 library(dplyr)
 library(tibble)
-library(vitals)
 library(fs)
 library(yaml)
 
