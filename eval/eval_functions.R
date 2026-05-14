@@ -43,7 +43,9 @@ parse_model_configs <- function(yaml_path) {
         thinking = model$thinking %||% FALSE,
         thinking_budget = model$thinking_budget %||% 2000,
         base_url = model$base_url %||% NULL,
-        api_key_env = model$api_key_env %||% NULL
+        api_key_env = model$api_key_env %||% NULL,
+        max_active = model$max_active %||% NULL,
+        rpm = model$rpm %||% NULL
       )
 
       config
@@ -136,6 +138,15 @@ run_single_eval <- function(
       # Build chat arguments
       chat_args <- build_chat_args(config)
 
+      # Build concurrency args from config (with defaults)
+      concurrency_args <- list()
+      if (!is.null(config$max_active)) {
+        concurrency_args$max_active <- config$max_active
+      }
+      if (!is.null(config$rpm)) {
+        concurrency_args$rpm <- config$rpm
+      }
+
       # Call model_eval with dynamic arguments
       do.call(
         model_eval_fn,
@@ -146,6 +157,7 @@ run_single_eval <- function(
             scorer_chat = scorer_chat,
             overwrite = FALSE # Don't overwrite existing results
           ),
+          concurrency_args,
           chat_args
         )
       )

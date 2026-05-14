@@ -30,12 +30,12 @@ available_models_with_provider <- available_models |>
 
 # Models to select at startup
 default_selected <- c(
-  "opus_4_5",
-  "haiku_4_5_thinking",
-  "sonnet_4_5_thinking",
-  "gemini_3",
-  "gpt_5_1",
-  "gpt_5"
+  "opus_4_7",
+  "haiku_4_5",
+  "sonnet_4_5",
+  "gemini_3_1",
+  "gpt_5_5",
+  "gpt_5_4"
 )
 
 # Build checkbox UI with provider headers

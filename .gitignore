@@ -59,6 +59,9 @@ rsconnect/
 # Logs
 logs/
 
+# Evaluation results
+results_rds/
+
 
 # RDS and RDA files (except app data)
 !data/app_data.rds

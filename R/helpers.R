@@ -159,7 +159,8 @@ plot_cost_vs_performance <- function(summary_data) {
     labs(
       x = "Total Cost (USD)",
       y = "Percent Correct",
-      color = "Provider"
+      color = "Provider",
+      caption = "Open-weight model costs listed as $0. See About page for details."
     ) +
     theme_light() +
     theme(
@@ -238,5 +239,8 @@ create_pricing_table <- function(summary_data, model_info) {
       ihtml.use_pagination = FALSE,
       ihtml.use_page_size_select = FALSE,
       table.width = gt::pct(100)
+    ) |>
+    gt::tab_footnote(
+      "Open-weight model costs listed as $0. See About page for details."
     )
 }
