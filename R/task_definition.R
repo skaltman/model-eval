@@ -42,6 +42,8 @@ model_eval <- function(
   filename = model,
   scorer_chat,
   overwrite = TRUE,
+  max_active = 10,
+  rpm = 500,
   ...
 ) {
   model_path <- fs::path(results_dir, filename, ext = "rds")
@@ -54,7 +56,7 @@ model_eval <- function(
   chat <- chat(name = model, ...)
 
   are_task <- create_are_task(scorer_chat)
-  are_task$eval(solver_chat = chat)
+  are_task$eval(solver_chat = chat, max_active = max_active, rpm = rpm)
 
   readr::write_rds(are_task, file = model_path)
 }
