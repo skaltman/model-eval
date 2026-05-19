@@ -56,6 +56,14 @@ models:
     output_price: 0.60
     api_model_id: google_gemini/gemini-3-flash-preview
 
+  - name: Gemini 3.5 Flash
+    model_id: gemini_3_5_flash
+    provider: Google
+    release_date: 2026-05-19
+    input_price: 1.50
+    output_price: 9
+    api_model_id: google_gemini/gemini-3.5-flash
+
   - name: Gemini 3.1 Pro
     model_id: gemini_3_1
     provider: Google
