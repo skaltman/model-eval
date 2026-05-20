@@ -12,6 +12,18 @@ models:
         type: enabled
         budget_tokens: 2000
 
+  - name: Claude Sonnet 4.6
+    model_id: sonnet_4_6
+    provider: Anthropic
+    release_date: 2026-02-17
+    input_price: 3
+    output_price: 15
+    api_model_id: anthropic/claude-sonnet-4-6-20260217
+    api_args:
+      thinking:
+        type: enabled
+        budget_tokens: 2000
+
   - name: Claude Opus 4.6
     model_id: opus_4_6
     provider: Anthropic
@@ -27,6 +39,14 @@ models:
     input_price: 5
     output_price: 25
     api_model_id: anthropic/claude-opus-4-7
+
+  - name: Claude Haiku 3.5
+    model_id: claude_3_5_haiku
+    provider: Anthropic
+    release_date: 2024-11-03
+    input_price: 0.80
+    output_price: 4
+    api_model_id: anthropic/claude-3-5-haiku-20241022
 
   - name: Claude Haiku 4.5
     model_id: haiku_4_5
@@ -52,8 +72,8 @@ models:
     model_id: gemini_3_flash
     provider: Google
     release_date: 2025-11-18
-    input_price: 0.15
-    output_price: 0.60
+    input_price: 0.50
+    output_price: 3.00
     api_model_id: google_gemini/gemini-3-flash-preview
 
   - name: Gemini 3.5 Flash
